@@ -8,88 +8,83 @@ const rgbToHex = (r, g, b) => '#' + [r, g, b].map(x => {
   return hex.length === 1 ? '0' + hex : hex
 }).join('')
 
-/**
- * @param {string} url - The source image
- * @param {number} aspectRatio - The aspect ratio
- * @return {Promise<HTMLCanvasElement>} A Promise that resolves with the resulting image as a canvas element
- */
-const crop = (url, aspectRatio) => {
-  // we return a Promise that gets resolved with our canvas element
-  return new Promise((resolve) => {
-    // this image will hold our source image data
-    const inputImage = new Image();
-
-    // we want to wait for our image to load
-    inputImage.onload = () => {
-      // let's store the width and height of our image
-      const inputWidth = inputImage.naturalWidth;
-      const inputHeight = inputImage.naturalHeight;
-
-      // get the aspect ratio of the input image
-      const inputImageAspectRatio = inputWidth / inputHeight;
-
-      // if it's bigger than our target aspect ratio
-      let outputWidth = inputWidth;
-      let outputHeight = inputHeight;
-      if (inputImageAspectRatio > aspectRatio) {
-        outputWidth = inputHeight * aspectRatio;
-      } else if (inputImageAspectRatio < aspectRatio) {
-        outputHeight = inputWidth / aspectRatio;
-      }
-
-      // calculate the position to draw the image at
-      const outputX = (outputWidth - inputWidth) * 0.5;
-      const outputY = (outputHeight - inputHeight) * 0.5;
-
-      // create a canvas that will present the output image
-      const outputImage = document.getElementById('myCanvas');
-
-      // set it to the same size as the image
-      outputImage.width = outputWidth;
-      outputImage.height = outputHeight;
-
-      // draw our image at position 0, 0 on the canvas
-      const ctx = outputImage.getContext("2d");
-      ctx.drawImage(inputImage, outputX, outputY);
-      resolve(outputImage);
-    };
-
-    // start loading our image
-    inputImage.src = url;
-  });
+const shotTypeClass = (shotType) => {
+  if(shotType === 1) {
+    return styles.shot
+  } else if(shotType === 2) {
+    return styles.shot2
+  } else if(shotType === 3) {
+    return styles.shot3
+  } else {
+    return styles.shot4
+  }
 }
+
+const wrapperTypeClass = (shotType) => {
+  if(shotType === 1) {
+    return styles.shotWrapper1
+  } else if(shotType === 2) {
+    return styles.shotWrapper2
+  } else if(shotType === 3) {
+    return styles.shotWrapper3
+  } else {
+    return styles.shotWrapper4
+  }
+}
+
 
 export default function Home() {
   const [backgroundColor, setBackgroundColor] = useState()
-  
+  const [shotType, setShotType] = useState()
+  const [heightWrapper, setHeightWrapper] = useState()
+  const [imageNumber, setImageNumber] = useState()
+
   useEffect(() => {
-    console.log('asdasd')
+    loadImage()
+  },[]); 
+
+  const loadImage = () => {
     const colorThief = new ColorThief();
     const img = document.getElementById('shot');
-    const randomNumber = "" + (Math.floor(Math.random() * 5995) + 1);
+    const randomNumber = "" + (Math.floor(Math.random() * 5621) + 40)
     const shotNumber = ('0000'+ randomNumber).substring(randomNumber.length);
+    // const shotNumber = '5614'
+    if (parseInt(shotNumber) >= 57 && parseInt(shotNumber) <= 110 || parseInt(shotNumber) >= 5614 && parseInt(shotNumber) <= 5621) {
+      setShotType(1)
+    } else if (parseInt(shotNumber) >= 111 && parseInt(shotNumber) <= 178  || parseInt(shotNumber) >= 5604 && parseInt(shotNumber) <= 5613 ) {
+      setShotType(2)
+    } else if (parseInt(shotNumber) >= 211 && parseInt(shotNumber) <= 561 || parseInt(shotNumber) >= 934 && parseInt(shotNumber) <= 940 || parseInt(shotNumber) >= 2725 && parseInt(shotNumber) <= 2764 || parseInt(shotNumber) >= 5459 && parseInt(shotNumber) <= 5603 ) {
+      setShotType(3)
+    } else {
+      setHeightWrapper('')
+      setShotType(4)
+    }
     console.log(shotNumber)
-    const imageURL = `/GrandBudapest/The.Grand.Budapest.Hotel.2014.1080p.BluRay.x264.YIFY%20${shotNumber}.jpg`;
+    const imageURL = `https://firebasestorage.googleapis.com/v0/b/grand-budapest-hotel-shots.appspot.com/o/shots%2FGrand-Budapest-Hotel%20${shotNumber}.jpg?alt=media`;
     let googleProxyURL = 'https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=2592000&url=';
     img.crossOrigin = 'Anonymous';
-    // img.src = googleProxyURL + encodeURIComponent(imageURL);
-    img.src = imageURL
+    img.src = googleProxyURL + encodeURIComponent(imageURL);
     img.onload = function() {
       const color = colorThief.getColor(img)
       console.log(color)
       console.log(rgbToHex(...color))
       setBackgroundColor(rgbToHex(...color))
     }
-    // crop(imageURL, 4 / 3)
-  },[]); 
+  }
+
+  const reload = () => {
+    location.reload();
+
+  }
 
   return (
     <div className={styles.container} style={{'backgroundColor': backgroundColor}}>
       <img className={styles.logo} src="https://i.vimeocdn.com/video/512942783.webp?mw=1100&mh=619&q=70"/>
-      {/* <canvas id="myCanvas"  className={styles.myCanvas}></canvas> */}
-      <div  className={styles.shotWrapper}>
-        <img id="shot" className={styles.shot}/>
+      <div  className={`${styles.shotWrapper} ${wrapperTypeClass(shotType)}`}>
+          <img id="shot" className={shotTypeClass(shotType)}/>
       </div>
+      <div className={styles.button} onClick={reload}>Reload</div>
     </div>
+    
   )
 }

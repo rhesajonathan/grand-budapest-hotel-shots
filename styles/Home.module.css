@@ -5,13 +5,42 @@
   align-items: center;
   height: 100vh;
 }
+
 .shotWrapper { 
   overflow: hidden;
   width: 40%;
   display: flex;
   justify-content: center;
+  align-items: center;
+} 
+.shotWrapper1 { 
+  width: 40%;
+  height: 34%;
+} 
+.shotWrapper2 { 
+  width: 40%;
+  height: 35%;
+} 
+.shotWrapper3 { 
+  width: 60%;
+  height: 40.5%;
+} 
+.shotWrapper4 { 
+  width: 40%;
 } 
 .shot {
+  width: 115%;
+}
+
+.shot2 {
+  width: 129%;
+}
+
+.shot3 {
+  width: 100%;
+}
+
+.shot4 {
   width: 140%;
 }
 
@@ -21,4 +50,13 @@
 
 .logo {
   width: 20%
+}
+
+.button {
+  border: 1px solid darkgoldenrod;
+  border-radius: 10px;
+  color: darkgoldenrod;
+  padding: 10px;
+  margin-top: 10px;
+  cursor: pointer;
 }
